@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "wifi_usart.hpp": "c",
+        "cmsis_os.h": "c",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "atomic": "cpp",
+        "xmemory": "cpp",
+        "string": "cpp"
+    }
+}

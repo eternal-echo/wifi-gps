@@ -1,0 +1,21 @@
+15:55:00 **** Incremental Build of configuration Debug for project ESP8266 ****
+make -j8 all 
+arm-none-eabi-g++ "../Bsp/imu/MPU6050.cpp" -mcpu=cortex-m4 -std=gnu++14 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/imu" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/usart/debug_usart" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/usart/wifi" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/usart/wifi/ESP8266" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/UserApp" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/usart" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/usart/bds" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/usart/bds/nmea_decode/include" -I"E:/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266/Bsp/imu/I2Cdev" -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF"Bsp/imu/MPU6050.d" -MT"Bsp/imu/MPU6050.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Bsp/imu/MPU6050.o"
+arm-none-eabi-g++ -o "ESP8266.elf" @"objects.list"   -mcpu=cortex-m4 -T"E:\Study\stm32\f429\repository\wifi\wifi-gps-imu-3\ESP8266\STM32F429IGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ESP8266.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Finished building target: ESP8266.elf
+ 
+arm-none-eabi-size   ESP8266.elf 
+arm-none-eabi-objdump -h -S  ESP8266.elf  > "ESP8266.list"
+   text	   data	    bss	    dec	    hex	filename
+  78092	    572	  51032	 129696	  1faa0	ESP8266.elf
+Finished building: default.size.stdout
+ 
+Finished building: ESP8266.list
+ 
+15:55:11 **** Incremental Build of configuration Debug for project ESP8266 ****
+make -j8 all 
+arm-none-eabi-size   ESP8266.elf 
+   text	   data	    bss	    dec	    hex	filename
+  78092	    572	  51032	 129696	  1faa0	ESP8266.elf
+Finished building: default.size.stdout
+ 

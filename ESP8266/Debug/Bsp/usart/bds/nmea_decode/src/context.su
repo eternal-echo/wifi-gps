@@ -1,0 +1,5 @@
+../Bsp/usart/bds/nmea_decode/src/context.c:17:16:nmea_property	4	static
+../Bsp/usart/bds/nmea_decode/src/context.c:26:6:nmea_trace	1048	static
+../Bsp/usart/bds/nmea_decode/src/context.c:44:6:nmea_trace_buff	24	static
+../Bsp/usart/bds/nmea_decode/src/context.c:51:6:nmea_error	1048	static
+../Bsp/usart/bds/nmea_decode/src/context.c:70:6:nmea_info	1048	static

@@ -1,0 +1,44 @@
+
+
+#ifndef WIFI_GPS_IMU_DEBUG_USART_HPP
+#define WIFI_GPS_IMU_DEBUG_USART_HPP
+
+
+#include "usart.hpp"
+#include "RingBuffer.hpp"
+
+// 使用该串口输出调试信息
+#define DEBUG_PRINTF(...) debugUsart.printf(__VA_ARGS__)
+
+extern "C" {void Debbug_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);}
+
+// debug usart class : usart1
+class DebugUsart : public Usart
+{
+friend void Debbug_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);
+public:
+	DebugUsart() {}
+    DebugUsart(UART_HandleTypeDef *husart) : Usart(husart) {}
+    ~DebugUsart() {}
+	void init();
+	void deinit(){}
+	int32_t recv(uint8_t* Buffer, uint32_t Length);
+private:
+	enum 
+    {
+        RING_BUFFER_SIZE = (1024 * 2),
+		DEFAULT_TIME_OUT = 3000,
+    };
+
+	struct RingBuffer_t
+    {
+        uint8_t  data[RING_BUFFER_SIZE];
+        uint16_t tail; 				
+        uint16_t head;
+    };
+	RingBuffer_t rxBuffer;
+};
+
+
+extern DebugUsart debugUsart;
+#endif //WIFI_GPS_IMU_DEBUG_USART_HPP

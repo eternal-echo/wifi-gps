@@ -1,0 +1,70 @@
+/**
+  ******************************************************************************
+  * @file    Applications\WiFi\ESP8266_IAP_Client\Inc\esp8266_io.h
+  * @author  MCD Application Team
+  * @brief   This file contains the common defines and functions prototypes for
+  *          the esp8266 IO operations.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __ESP8266_IO_H
+#define __ESP8266_IO_H
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+#include "usart.h"
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+#define DEFAULT_TIME_OUT                 3000 /* in ms */
+
+#define RING_BUFFER_SIZE                         (1024 * 2)
+
+// 模块使能端（高电平有效）
+#define ESP8266_CH_ENABLE()              HAL_GPIO_WritePin(ESP8266_CH_PD_GPIO_Port, ESP8266_CH_PD_Pin, GPIO_PIN_SET)
+#define ESP8266_CH_DISABLE()             HAL_GPIO_WritePin(ESP8266_CH_PD_GPIO_Port, ESP8266_CH_PD_Pin, GPIO_PIN_RESET)
+
+// 重启ESP8266（低电平有效）
+#define ESP8266_RST_ENABLE()             HAL_GPIO_WritePin(ESP8266_RST_GPIO_Port, ESP8266_RST_Pin, GPIO_PIN_RESET)
+#define ESP8266_RST_DISABLE()            HAL_GPIO_WritePin(ESP8266_RST_GPIO_Port, ESP8266_RST_Pin, GPIO_PIN_SET)
+
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+
+typedef struct
+{
+  uint8_t  data[RING_BUFFER_SIZE];
+  uint16_t tail; 				
+  uint16_t head;
+}RingBuffer_t;
+
+/* Exported variables --------------------------------------------------------*/
+extern RingBuffer_t WiFiRxBuffer;
+
+/* Exported functions ------------------------------------------------------- */
+int8_t ESP8266_IO_Init(UART_HandleTypeDef *husart);
+void ESP8266_IO_DeInit(UART_HandleTypeDef *husart);
+
+int8_t ESP8266_IO_Send(UART_HandleTypeDef *husart, uint8_t* Buffer, uint32_t Length);
+int32_t ESP8266_IO_Receive(uint8_t* Buffer, uint32_t Length);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __ESP8266_IO_H */
+

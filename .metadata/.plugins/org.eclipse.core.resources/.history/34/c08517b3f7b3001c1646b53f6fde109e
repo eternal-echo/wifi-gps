@@ -1,0 +1,70 @@
+#ifndef __USART_HPP__
+#define __USART_HPP__
+
+#include <usart.h>
+#include <common_inc.h>
+#include <string>
+ /**
+   * Base class for Usart peripherals. Takes care of the common operations
+   * that each peripheral can have
+   */
+
+class Usart {
+public:
+    /**
+     * Constructor
+     * @param usart handle to the usart peripheral
+     */
+    Usart(UART_HandleTypeDef *husart);
+    /**
+     * Destructor
+     */
+    virtual ~Usart();
+    /**
+     * @brief init the usart peripheral
+     */
+    virtual void init();
+    /**
+     * @brief deinit the usart peripheral
+     * 
+     */
+    virtual void deinit();
+    /**
+     * Send a single byte
+     * @param data byte to send
+     */
+    void send(uint8_t data);
+    /**
+     * Send a string
+     * @param data string to send
+     */
+    void send(const char* data);
+    /**
+     * Send a string
+     * @param data string to send
+     * @param length length of the string
+     */
+    void send(const char* data, uint16_t length);
+    /**
+     * Send a string
+     * @param data string to send
+     */
+    void send(const std::string& data);
+    /**
+     * Send a string
+     * @param data string to send
+     * @param length length of the string
+     */
+    void send(const std::string& data, uint16_t length);
+    /**
+     * format a string and send it
+     * @param fmt format string
+     */
+    void printf(const char* fmt, ...);
+protected:
+    // uart handle (hal)
+    UART_HandleTypeDef* usart_;
+};
+
+
+#endif  // __USART_HPP__

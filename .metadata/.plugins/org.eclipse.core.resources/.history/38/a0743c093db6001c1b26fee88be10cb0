@@ -1,0 +1,49 @@
+#include "MPU6050.h"
+#include "i2c.h"
+
+class MPU6050
+{
+public:
+    MPU6050(I2C_HandleTypeDef* hi2c=&hi2c1, uint8_t address = MPU6050_DEFAULT_ADDRESS);
+    void Init();
+    void testConnection();
+    void Update();
+
+    enum class STATUS
+    {
+        IDLE = 0x00,
+        TX_DATA = 0x01,
+        TX_END = 0x02,
+    };
+    struct ImuDataRaw_t
+    {
+        int16_t ax;
+        int16_t ay;
+        int16_t az;
+        int16_t gx;
+        int16_t gy;
+        int16_t gz;
+    } dataRaw;
+    struct ImuData_t
+    {
+        float ax;
+        float ay;
+        float az;
+        float gx;
+        float gy;
+        float gz;
+    } data;
+private:
+    void setClockSource(uint8_t source);
+    void setFullScaleGyroRange(uint8_t range);
+    void setFullScaleAccelRange(uint8_t range);
+    void setDLPFMode(uint8_t bandwidth);
+    void setSleepEnabled(bool enabled);
+
+    I2C_HandleTypeDef* hi2c_;
+    uint8_t devAddr; // device address
+    float gyroRangeScale;// = 131.0f / 32768.0f;
+    float accRangeScale;// = 16384.0f / 32768.0f;
+
+}
+    

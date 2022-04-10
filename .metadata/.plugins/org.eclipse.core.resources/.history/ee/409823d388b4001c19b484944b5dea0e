@@ -1,0 +1,26 @@
+
+
+#ifndef WIFI_GPS_IMU_DEBUG_USART_HPP
+#define WIFI_GPS_IMU_DEBUG_USART_HPP
+
+
+#include "usart.hpp"
+
+
+
+#define DEBUG_PRINTF(...) debugUsart.printf(__VA_ARGS__)
+
+// debug usart class : usart1
+class DebugUsart : public Usart
+{
+public:
+	DebugUsart{}
+    DebugUsart(UART_HandleTypeDef *husart) : Usart(husart) {}
+    ~DebugUsart() {}
+	void init(){}
+	void deinit(){}
+};
+
+
+extern DebugUsart debugUsart;
+#endif //WIFI_GPS_IMU_DEBUG_USART_HPP

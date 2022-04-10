@@ -1,0 +1,74 @@
+#ifndef __USART_HPP__
+#define __USART_HPP__
+
+#include <usart.h>
+#include <common_inc.h>
+
+ /**
+   * Base class for Usart peripherals. Takes care of the common operations
+   * that each peripheral can have
+   */
+
+class Usart {
+public:
+    /**
+     * Constructor
+     * @param usart handle to the usart peripheral
+     */
+	Usart() : husart_(nullptr){}
+    Usart(UART_HandleTypeDef *husart) : husart_(husart){}
+    /**
+     * Destructor
+     */
+    virtual ~Usart(){}
+    /**
+     * @brief init the usart peripheral
+     */
+    virtual void init(){}
+    virtual void init(UART_HandleTypeDef *husart);
+    /**
+     * @brief deinit the usart peripheral
+     *
+     */
+    virtual void deinit();
+
+    int8_t send(uint8_t data);
+    int8_t send(const uint8_t * data);
+    /**
+     * @brief  Send Data over the UART interface.
+     * 
+     * @param data: data to send.
+     * @param length: the data length.
+     * @retval 0 on success, -1 otherwise.
+     */
+    int8_t send(const uint8_t * data, uint16_t length);
+    int8_t send(const std::string& data);
+    int8_t send(const std::string& data, uint16_t length);
+    /**
+     * format a string and send it
+     * @param fmt format string
+     */
+    virtual void printf(const char* fmt, ...);
+    void print(double n, int digits=2);
+    void print(const char* str);
+    void print(int n);
+    void print(uint8_t data){send(data);}
+    void write(uint8_t data){send(data);}
+    /**
+     * @brief receive data from the usart peripheral
+     * 
+     * @param Buffer 
+     * @param Length 
+     * @return int32_t 
+     */
+    virtual int32_t recv(uint8_t* Buffer, uint32_t Length);
+    virtual int32_t recv(std::string& Buffer, uint32_t Length);
+protected:
+    // uart handle (HAL)
+    UART_HandleTypeDef* husart_ = nullptr;
+    
+
+};
+
+
+#endif  // __USART_HPP__

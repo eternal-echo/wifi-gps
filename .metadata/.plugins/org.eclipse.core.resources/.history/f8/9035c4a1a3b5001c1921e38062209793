@@ -1,0 +1,210 @@
+#ifndef __WIFI_GPS_IMU_WIFI_USART_HPP__
+#define __WIFI_GPS_IMU_WIFI_USART_HPP__
+
+#include "common_inc.h"
+#include "usart.hpp"
+#include "usart.h"
+#include <string>
+#include "debug_usart.hpp"
+extern "C" {void Wifi_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);}
+
+// wifi usart class : usart2
+class WifiUsart : public Usart
+{
+friend void Wifi_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);
+/* enum and struct -----------------------------------------------------------*/
+public:
+    /* enum */
+    enum ESP8266_Boolean
+    {
+        ESP8266_FALSE         = 0,
+        ESP8266_TRUE          = 1
+    } ;
+
+    enum class ESP8266_Status
+    { 
+        ESP8266_OK                            = 0,
+        ESP8266_ERROR                         = 1,
+        ESP8266_BUSY                          = 2,
+        ESP8266_ALREADY_CONNECTED             = 3,
+        ESP8266_CONNECTION_CLOSED             = 4,
+        ESP8266_TIMEOUT                       = 5,
+        ESP8266_IO_ERROR                      = 6,
+    } ;
+
+    enum class ESP8266_Encryption
+    {
+        ESP8266_ENCRYPTION_OPEN         = 0,
+        ESP8266_ENCRYPTION_WEP          = 1,
+        ESP8266_ENCRYPTION_WPA_PSK      = 2,
+        ESP8266_ENCRYPTION_WPA2_PSK     = 3,
+        ESP8266_ENCRYPTION_WPA_WPA2_PSK = 4,
+    } ;
+
+    enum class ESP8266_Mode
+    {
+        ESP8266_STATION_MODE      = 0,
+        ESP8266_ACCESSPPOINT_MODE = 1,
+        ESP8266_MIXED_MODE        = 2,
+    } ;
+
+    enum class ESP8266_TransferMode
+    {
+        NORMAL_MODE      = 0,
+        UNVARNISHED_MODE = 1
+    } ;
+
+    enum class ESP8266_ConnectionStatus
+    {
+        ESP8266_GOT_IP_STATUS       = 1,
+        ESP8266_CONNECTED_STATUS    = 2,
+        ESP8266_DISCONNECTED_STATUS = 3,
+    } ;
+
+    enum class ESP8266_ConnectionMode
+    {
+        ESP8266_TCP_CONNECTION = 0,
+        ESP8266_UDP_CONNECTION = 1,
+    } ;
+
+    enum class ESP8266_ConnectionPolicy
+    {
+        UDP_PEER_NO_CHANGE   = 0,
+        UPD_PEER_CHANGE_ONCE = 1,
+        UDP_PEER_CHANGE_ALLOWED = 2,
+        UDP_PEER_CHANGE_INVALID = -1,
+    } ;
+    // define in esp8266_io.h
+    enum 
+    {
+        MAX_NUM_TRIAL = 10,
+        RING_BUFFER_SIZE = (1024 * 2),
+        DEFAULT_TIME_OUT = 3000
+    };
+    // define in esp8266.h
+    enum 
+    {
+        MAX_BUFFER_SIZE = 1500,
+        MAX_AT_CMD_SIZE = 256,
+    };
+    /* struct */
+    struct ESP8266_ConnectionInfo
+    {
+        ESP8266_ConnectionStatus  connectionStatus;
+        ESP8266_ConnectionMode    connectionType;
+        ESP8266_ConnectionPolicy  connectionMode;  /* For UDP connections only */
+        uint8_t                          connectionID;
+        uint8_t*                         ipAddress;
+        uint32_t                         port;
+        uint32_t                         localPort;       /* for UDP connection only */
+        ESP8266_Boolean                  isServer;  
+    } ;
+
+    struct ESP8266_APConfig
+    {
+        uint8_t*                   ssid;
+        uint8_t*                   password;
+        uint16_t                   channedID;
+        ESP8266_Encryption  encryptionMode;
+    } ;
+
+    struct RingBuffer_t
+    {
+        uint8_t  data[RING_BUFFER_SIZE];
+        uint16_t tail; 				
+        uint16_t head;
+    };
+
+    // AT cmd
+	#define AT_OK_STRING            "OK\r\n"
+	#define AT_IPD_OK_STRING        "OK\r\n\r\n"
+	#define AT_SEND_OK_STRING       "SEND OK\r\n"
+	#define AT_SEND_PROMPT_STRING   "OK\r\n>"
+	#define AT_ERROR_STRING         "ERROR\r\n"
+	#define AT_IPD_STRING           "+IPD,"
+
+/* public functions ----------------------------------------------------------*/
+public:
+    // 默认的空初始化，定义全局变量时使用
+    WifiUsart() : Usart(nullptr),WiFiUartHandle(husart_) {}
+    // 初始化串口handle与esp8266的连接
+    WifiUsart(UART_HandleTypeDef *husart) : Usart(husart),WiFiUartHandle(husart_) {}
+    // 初始化串口handle和esp8266，连接至wifi和host
+    WifiUsart(UART_HandleTypeDef *husart, const char* ssid, const char* password, const char* host, uint32_t port)
+    : Usart(husart),WiFiUartHandle(husart_)
+    {init(ssid,  password,  host,  port);}
+    ~WifiUsart() {deinit();}
+    // init esp8266 wifi usart
+    // 连接esp8266模块
+    void init();
+    // 确定esp8266的连接后，可驱动esp8266联网
+    void init(const char* ssid, const char* password, const char* host, uint32_t port);
+    // 根据usart handle连接esp8266模块，然后驱动esp8266联网
+    void init(UART_HandleTypeDef *husart, const char* ssid, const char* password, const char* host, uint32_t port);
+    // deinit esp8266 wifi usart
+    void deinit();    
+    int32_t WifiUsart::recv(uint8_t* Buffer, uint32_t Length);
+    /**
+     * @brief join wifi
+     * 
+     * @param ssid :wifi ssid(name)
+     * @param password wifi password
+     */
+    void join_wifi(const char* ssid, const char* password);
+    /**
+     * @brief connect to host
+     * 
+     * @param host :host address (ip)
+     * @param port :host port (default:8000)
+     */
+    void connect_host(const char* host, uint32_t port);
+    void printf(const char* fmt, ...);
+/* public variables ----------------------------------------------------------*/
+
+
+/* private functions ---------------------------------------------------------*/
+private:
+    /* esp8266_io.c */
+    // 模块使能端（高电平有效）
+    void ESP8266_CH_ENABLE() {HAL_GPIO_WritePin(ESP8266_CH_PD_GPIO_Port, ESP8266_CH_PD_Pin, GPIO_PIN_SET);}
+    void ESP8266_CH_DISABLE() {HAL_GPIO_WritePin(ESP8266_CH_PD_GPIO_Port, ESP8266_CH_PD_Pin, GPIO_PIN_RESET);}
+    // 重启ESP8266（低电平有效）
+    void ESP8266_RST_ENABLE() {HAL_GPIO_WritePin(ESP8266_RST_GPIO_Port, ESP8266_RST_Pin, GPIO_PIN_RESET);}
+    void ESP8266_RST_DISABLE() {HAL_GPIO_WritePin(ESP8266_RST_GPIO_Port, ESP8266_RST_Pin, GPIO_PIN_SET);}
+
+    int8_t ESP8266_IO_Init();
+    void ESP8266_IO_DeInit();
+    int8_t ESP8266_IO_Send(uint8_t* Buffer, uint32_t Length);
+    int32_t ESP8266_IO_Receive( uint8_t* Buffer, uint32_t Length);
+    /* esp8266.c */
+    ESP8266_Status ESP8266_Init(void);
+    ESP8266_Status ESP8266_DeInit(void);
+    ESP8266_Status ESP8266_Restart(void);
+    
+    ESP8266_Status ESP8266_QuitAccessPoint(void);
+    ESP8266_Status ESP8266_JoinAccessPoint(uint8_t* ssid, uint8_t* password);
+    ESP8266_Status ESP8266_GetIPAddress(ESP8266_Mode mode, uint8_t* ip_address);
+    ESP8266_Status ESP8266_EstablishConnection(const ESP8266_ConnectionInfo* connection_info);
+    ESP8266_Status ESP8266_CloseConnection(const uint8_t channel_id);
+
+    ESP8266_Status ESP8266_SendData(uint8_t* pData, uint32_t Length);
+    ESP8266_Status ESP8266_ReceiveData(uint8_t* pData, uint32_t Length, uint32_t* retLength);
+
+    ESP8266_Status runAtCmd(uint8_t* cmd, uint32_t Length, const uint8_t* Token);
+    ESP8266_Status getData(uint8_t* Buffer, uint32_t Length, uint32_t* RetLength);
+/* private variables ---------------------------------------------------------*/
+private:
+    UART_HandleTypeDef* &WiFiUartHandle; // wifi usart handle(reference)
+    uint8_t IpAddress[15] = {0};
+    uint32_t Trial = 0;
+    ESP8266_Status Status = ESP8266_Status::ESP8266_OK;
+
+
+    uint8_t AtCmd[MAX_AT_CMD_SIZE] = {0};
+    uint8_t RxBuffer[MAX_BUFFER_SIZE] = {0};
+    RingBuffer_t WiFiRxBuffer = {0};
+};
+
+extern WifiUsart wifiUsart;
+
+#endif //__WIFI_GPS_IMU_WIFI_USART_HPP__

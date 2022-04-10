@@ -1,0 +1,44 @@
+#include <usart.hpp>
+
+void Usart::init() {
+
+}
+
+void Usart::deinit() {
+
+}
+
+void Usart::send(uint8_t data) {
+    // send a single byte
+    HAL_UART_Transmit(husart_, &data, 1, 0xFFFF);
+}
+
+void Usart::send(const char* data) {
+    // send a string
+    HAL_UART_Transmit(husart_, (uint8_t*)data, strlen(data), 0xFFFF);
+}
+
+void Usart::send(const char* data, uint16_t length) {
+    // send a string
+    HAL_UART_Transmit(husart_, (uint8_t*)data, length, 0xFFFF);
+}
+
+void Usart::send(const std::string& data) {
+    // send a string
+    HAL_UART_Transmit(husart_, (uint8_t*)data.c_str(), data.length(), 0xFFFF);
+}
+
+void Usart::send(const std::string& data, uint16_t length) {
+    // send a string
+    HAL_UART_Transmit(husart_, (uint8_t*)data.c_str(), length, 0xFFFF);
+}
+
+void Usart::printf(const char* fmt, ...) {
+    // format a string and send it
+    va_list args;
+    va_start(args, fmt);
+    char buffer[256];
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    HAL_UART_Transmit(husart_, (uint8_t*)buffer, strlen(buffer), 0xFFFF);
+    va_end(args);
+}

@@ -1,0 +1,175 @@
+#include <I2Cdev.hpp>
+#include "common_inc.h"
+#include "usart.h"
+#include "i2c.h"
+#include "math.h"
+#include "usart.hpp"
+#include "debug_usart.hpp"
+#include "wifi_usart.hpp"
+#include "bds_usart.h"
+// I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
+// for both classes must be in the include path of your project
+#include "MPU6050.hpp"
+//#include "MPU6050.h" // not necessary if using MotionApps include file
+
+/* Access point connection parametres */
+#define WIFI_SSID       "honor"
+#define WIFI_PASSWORD   "33445566"
+#define HOST_ADDRESS    "192.168.43.183"
+#define HOST_PORT       8000
+
+DebugUsart debugUsart(&huart1);
+WifiUsart wifiUsart(&huart2);
+BDS_Usart bdsUsart(&huart3);
+MPU6050 mpu6050(&hi2c1);
+
+
+// ================================================================
+// ===               INTERRUPT DETECTION ROUTINE                ===
+// ================================================================
+
+volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
+// PI1 is connected to interrupt pin on MPU6050
+// EXTI callback function
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if(GPIO_Pin == MPU6050_INT_Pin)
+    {
+        mpuInterrupt = true;
+    }
+}
+
+
+/* Threads ---------------------------------------------------------*/
+osThreadId imu_taskHandle;
+osThreadId bds_taskHandle;
+osThreadId control_taskHandle;
+
+// imu 线程
+void thread_imu(void const * argument)
+{
+    osEvent event;
+    debugUsart.printf("imu tsak\r\n");
+    // initialize device
+    do
+    {
+        mpu6050.Init();
+        osDelay(100);
+    } while (!mpu6050.testConnection());
+    /* Infinite loop */
+    for(;;)
+    {
+        // update IMU data
+        mpu6050.Update();
+        // get roll, pitch
+        float roll, pitch;
+        mpu6050.getRotation(roll, pitch);
+        // wait for send position cmd from ctrl task
+        event = osSignalWait((int32_t)MPU6050::STATUS::TX_DATA, 10);
+        if(event.status == osEventSignal)
+        {
+            // handle event status
+            if(event.value.signals & (int32_t)MPU6050::STATUS::TX_DATA)
+            {
+                // handle event status
+                mpu6050.Update();
+                wifiUsart.printf("IMU angle: roll%.3f/%.3f\r\n", roll, pitch);
+                // send end signal to ctrl task
+                osSignalSet(control_taskHandle, (int32_t)MPU6050::STATUS::TX_END);
+            
+            }
+        }
+    }
+}
+// BDS 线程
+void thread_bds(void const * argument)
+{
+    osEvent event;
+    bdsUsart.init();
+    /* Infinite loop */
+    for(;;)
+    {
+        // wait for send position cmd from ctrl task
+        event = osSignalWait((int32_t)BDS_Usart::STATUS::TX_DATA, osWaitForever);
+        if (event.status == osEventSignal)
+        {
+          // handle event status
+            if(event.value.signals & (int32_t)BDS_Usart::STATUS::TX_DATA)
+            {
+                // wait for GPS_RX_Event
+                event = osSignalWait((int32_t)BDS_Usart::STATUS::RX_FULL | (int32_t)BDS_Usart::STATUS::RX_HALF, osWaitForever);
+                if(event.status == osEventSignal)
+                {
+                    // handle event status
+                    bdsUsart.decode(event.value.signals, &wifiUsart);
+                    // send end signal to ctrl task
+                    osSignalSet(control_taskHandle, (int32_t)BDS_Usart::STATUS::TX_END);
+                }
+            }
+        }
+    }
+}
+
+// 控制线程
+void thread_control(void const * argument)
+{
+    osEvent event;
+    Usart* usart = (Usart*)argument;
+    uint8_t cmd;
+    debugUsart.printf("ctrl tsak\r\n");
+    /* Infinite loop */
+    for(;;)
+    {
+        usart->recv(&cmd,1);
+        if(cmd==0x01)
+        {
+        	cmd=0;
+        	debugUsart.printf("imu cmd\r\n");
+            // notify imu_task to send data
+            osSignalSet(imu_taskHandle, (int32_t)MPU6050::STATUS::TX_DATA);
+            // wait for imu_task to send data
+            event = osSignalWait((int32_t)BDS_Usart::STATUS::TX_END, osWaitForever);
+            usart->printf("get position from imu_task successfully!\r\n");
+        }
+        else if(cmd==0x02)
+        {
+        	cmd=0;
+        	debugUsart.printf("bds cmd\r\n");
+            // notify bds_task to send data
+            osSignalSet(bds_taskHandle, (int32_t)BDS_Usart::STATUS::TX_DATA);
+            // wait for bds_task to send data
+            event = osSignalWait((int32_t)BDS_Usart::STATUS::TX_END, osWaitForever);
+            usart->printf("get position from bds_task successfully!\r\n");
+        }
+        else 
+        {
+        	debugUsart.printf("waiting for cmd\r\n");
+        	osDelay(10);
+        }
+
+    }
+}
+
+/* Default Entry -------------------------------------------------------*/
+void Main(void)
+{
+	// init
+    debugUsart.printf("wifi bds imu project\r\n");
+    wifiUsart.init(WIFI_SSID, WIFI_PASSWORD, HOST_ADDRESS, HOST_PORT);
+    wifiUsart.printf("wifi module connected successfully!\r\n");
+
+    // IMU 线程, 实现测量姿态
+    osThreadDef(imu_task, thread_imu, osPriorityHigh, 0, 1024);
+    imu_taskHandle = osThreadCreate(osThread(imu_task), NULL);
+    // BDS 线程, 实现定位
+    osThreadDef(bds_task, thread_bds, osPriorityNormal, 0, 1024);
+    bds_taskHandle = osThreadCreate(osThread(bds_task), NULL);
+    // 控制线程，通过Usart接口接收用户指令，并执行相应操作
+    osThreadDef(control_task, thread_control, osPriorityAboveNormal, 0, 1024);
+    // 通过wifi实现控制
+    control_taskHandle = osThreadCreate(osThread(control_task), &wifiUsart);
+    while(1)
+    {
+        osDelay(1000);
+    }
+}

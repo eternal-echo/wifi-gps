@@ -1,0 +1,320 @@
+make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** No rule to make target 'all'.  Stop.
+
+# GNU Make 4.3
+# Built for x86_64-pc-msys
+# Copyright (C) 1988-2020 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Sun Apr 10 16:07:17 2022
+
+# Variables
+
+# environment
+RABBITMQ_BASE = C:\ProgramData\RabbitMQ
+# environment
+SYSTEMDRIVE = C:
+# environment
+JAVA_HOME = E:\library\java\src
+# environment
+LC_ALL = C
+# environment
+RABBITMQ_NODENAME = rabbit@localhost
+# environment
+USERPROFILE = C:\Users\袁雨
+# environment
+VBOX_MSI_INSTALL_PATH = E:\Software\compiler\VirtualBox\software\
+# environment
+MKL_SERIAL = YES
+# environment
+C_INCLUDE_PATH = E:\library\msys2\software\mingw64\\include
+# environment
+LOCALAPPDATA = C:\Users\袁雨\AppData\Local
+# environment
+VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-1cbe6308-859c-48ef-a5ce-669d6230d07e-sock
+# environment
+VSCODE_CWD = E:\Study\stm32\f429\repository\wifi\wifi-gps-imu-3\ESP8266
+# environment
+SYSTEMROOT = C:\WINDOWS
+# environment
+PROCESSOR_LEVEL = 6
+# environment
+PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
+# default
+MAKE_COMMAND := make
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_2304_OFLNOEETQCJEGHVU
+# environment
+!E: = e:\Study\stm32\f429\repository\wifi\wifi-gps-imu-3\ESP8266
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+.VARIABLES := 
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+VSCODE_LOG_STACK = false
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\袁雨\AppData\Roaming\Code\CachedData\8dfae7a5cd50421d10cd99cb873990460525a898
+# environment
+ERLANG_HOME = C:\Program Files\erl9.2
+# environment
+LANG = C
+# default
+.LOADED := 
+# environment
+TMP = /d/AppData/Local/Temp/Temp
+# default
+.INCLUDE_DIRS = /usr/include /usr/include
+# makefile
+MAKEFLAGS = pqrR
+# environment
+INSTALLER_PATH = E:\library\DevEco\software\Huawei\DevEco-Device-Tool
+# environment
+ONEDRIVE = C:\Users\袁雨\OneDrive
+# makefile
+CURDIR := /e/Study/stm32/f429/repository/wifi/wifi-gps-imu-3/ESP8266
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+PROGRAMFILES = C:\Program Files
+# environment
+MFLAGS = -pqrR
+# default
+.SHELLFLAGS := -c
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# makefile
+MAKEFILE_LIST := 
+# automatic
+@F = $(notdir $@)
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+VSCODE_PID = 2304
+# environment
+CLION = E:\Software\compiler\jetbrains\CLion\software\CLion 2021.3.4\bin;
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+*F = $(notdir $*)
+# environment
+RABBITMQ_CONFIG_FILE = "C:\ProgramData\National Instruments\Skyline\RabbitMQ\rabbitmq"
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# environment
+VSCODE_NLS_CONFIG = {"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"8aee2a6259b28036085891d63c7b68d2.zh-cn","_translationsConfigFile":"C:\\Users\\袁雨\\AppData\\Roaming\\Code\\clp\\8aee2a6259b28036085891d63c7b68d2.zh-cn\\tcf.json","_cacheRoot":"C:\\Users\\袁雨\\AppData\\Roaming\\Code\\clp\\8aee2a6259b28036085891d63c7b68d2.zh-cn","_resolvedLanguagePackCoreLocation":"C:\\Users\\袁雨\\AppData\\Roaming\\Code\\clp\\8aee2a6259b28036085891d63c7b68d2.zh-cn\\8dfae7a5cd50421d10cd99cb873990460525a898","_corruptedFile":"C:\\Users\\袁雨\\AppData\\Roaming\\Code\\clp\\8aee2a6259b28036085891d63c7b68d2.zh-cn\\corrupted.info","_languagePackSupport":true}
+# environment
+INCLUDE = E:\Software\compiler\Visual Stdio\software\ide\VC\Tools\MSVC\14.30.30705\include
+# environment
+ONEDRIVECONSUMER = C:\Users\袁雨\OneDrive
+# default
+MAKE_HOST := x86_64-pc-msys
+# environment
+PROGRAMDATA = C:\ProgramData
+# default
+SHELL := /bin/sh
+# environment
+CLASSPATH = .;E:\library\java\src\lib;E:\library\java\src\lib\dt.jar;E:\library\java\src\lib\tools.jar;
+# environment
+HOMEPATH = \Users\袁雨
+# environment
+PLATFORMIO_CALLER = vscode
+# default
+MAKECMDGOALS := all
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+COMSPEC = C:\WINDOWS\system32\cmd.exe
+# environment
+WINDIR = C:\WINDOWS
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+PATH = /e/library/DevEco/software/Huawei/DevEco-Device-Tool/core/deveco-venv/Scripts:/e/library/DevEco/software/Huawei/DevEco-Device-Tool/core/deveco-venv:/c/Program Files (x86)/Common Files/Oracle/Java/javapath:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Users/袁雨/.dnx/bin:C:/e/Program Files/Microsoft DNX/Dnvm:/c/Program Files/Microsoft SQL Server/150/Tools/Binn:/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn:/e/Software/compiler/Visual Stdio/software/ide/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64:/c/Program Files (x86)/National Instruments/Shared/LabVIEW CLI:/e/library/opencv/opencv_w_4_5_5/opencv/build/bin:/e/library/opencv/opencv_w_4_5_5/opencv/build/x64/vc15/bin:/e/library/opencv/opencv_w_4_5_5/opencv/build/x64/vc15/lib:/e/Software/compiler/JavaScript/Node.js/software:/e/Software/compiler/CMake/software/bin:/e/Software/compiler/Git/Git/cmd:/c/Program Files/dotnet:/e/Software/compiler/putty/software:/mingw32/bin:/mingw64/bin:/usr/bin:/e/library/java/src/bin:/e/library/gcc-arm-none-eabi/src/10 2021.10/bin:/e/Software/compiler/python/software/python/Scripts:/e/Software/compiler/python/software/python:/c/Users/袁雨/AppData/Local/Microsoft/WindowsApps:/e/Software/compiler/Microsoft VS Code/bin:/c/Users/袁雨/AppData/Roaming/npm:/e/.dotnet/tools:/e/Software/Tools/input-method/software/espanso:/usr/bin:/e/Software/compiler/jetbrains/CLion/software/CLion 2021.3.4/bin:/c/Program Files (x86)/Common Files/Oracle/Java/javapath:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Users/袁雨/.dnx/bin:C:/e/Program Files/Microsoft DNX/Dnvm:/c/Program Files/Microsoft SQL Server/150/Tools/Binn:/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn:/e/Software/compiler/Visual Stdio/software/ide/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64:/c/Program Files (x86)/National Instruments/Shared/LabVIEW CLI:/e/library/opencv/opencv_w_4_5_5/opencv/build/bin:/e/library/opencv/opencv_w_4_5_5/opencv/build/x64/vc15/bin:/e/library/opencv/opencv_w_4_5_5/opencv/build/x64/vc15/lib:/e/Software/compiler/JavaScript/Node.js/software:/e/Software/compiler/CMake/software/bin:/e/Software/compiler/Git/Git/cmd:/c/Program Files/dotnet:/e/Software/compiler/putty/software:/mingw32/bin:/mingw64/bin:/usr/bin:/e/library/java/src/bin:/e/library/gcc-arm-none-eabi/src/10 2021.10/bin:/e/Software/compiler/python/software/python/Scripts:/e/Software/compiler/python/software/python:/c/Users/袁雨/AppData/Local/Microsoft/WindowsApps:/e/Software/compiler/Microsoft VS Code/bin:/c/Users/袁雨/AppData/Roaming/npm:/e/.dotnet/tools:/e/Software/Tools/input-method/software/espanso:/usr/bin:/e/Software/compiler/jetbrains/CLion/software/CLion 2021.3.4/bin
+# environment
+COMPUTERNAME = LAPTOP-3H3NNULN
+# default
+MAKEFILES := 
+# environment
+KMP_DUPLICATE_LIB_OK = TRUE
+# environment
+MINGW_HOME = E:\library\msys2\software\mingw64\
+# automatic
+^F = $(notdir $^)
+# environment
+NIEXTCCOMPILERSUPP = C:\Program Files (x86)\National Instruments\Shared\ExternalCompilerSupport\C\
+# environment
+PROMPT = $P$G
+# environment
+LOGONSERVER = \\LAPTOP-3H3NNULN
+# environment
+VSCODE_LOG_NATIVE = false
+# environment
+USERNAME = 袁雨
+# environment
+COMMONPROGRAMFILES = C:\Program Files\Common Files
+# automatic
+?F = $(notdir $?)
+# environment
+PROGRAMW6432 = C:\Program Files
+# environment
+NO_PROXY = 127.0.0.1,127.0.0.1
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+# automatic
++F = $(notdir $+)
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+USERDOMAIN = LAPTOP-3H3NNULN
+# 'override' directive
+GNUMAKEFLAGS := 
+# environment
+VS140COMNTOOLS = E:\Software\compiler\Visual Stdio\software\Common7\Tools\
+# environment
+OS = Windows_NT
+# environment
+__COMPAT_LAYER = DetectorsAppHealth
+# environment
+PLATFORMIO_PATH = C:\.platformio\python3;E:\library\DevEco\software\Huawei\DevEco-Device-Tool\core\deveco-venv\Scripts;E:\library\DevEco\software\Huawei\DevEco-Device-Tool\core\deveco-venv;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\袁雨\.dnx\bin;C;\Program Files\Microsoft DNX\Dnvm\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;E:\Software\compiler\Visual Stdio\software\ide\VC\Tools\MSVC\14.30.30705\bin\Hostx64\x64;C:\Program Files (x86)\National Instruments\Shared\LabVIEW CLI;E:\library\opencv\opencv_w_4_5_5\opencv\build\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\lib;E:\Software\compiler\JavaScript\Node.js\software\;E:\Software\compiler\CMake\software\bin;E:\Software\compiler\Git\Git\cmd;C:\Program Files\dotnet\;E:\Software\compiler\putty\software\;E:\library\msys2\software\mingw32\bin;E:\library\msys2\software\mingw64\\bin;E:\library\msys2\software\usr\bin;E:\library\java\src\bin;E:\library\gcc-arm-none-eabi\src\10 2021.10\bin;E:\Software\compiler\python\software\python\Scripts\;E:\Software\compiler\python\software\python\;C:\Users\袁雨\AppData\Local\Microsoft\WindowsApps;E:\Software\compiler\Microsoft VS Code\bin;C:\Users\袁雨\AppData\Roaming\npm;\.dotnet\tools;E:\Software\Tools\input-method\software\espanso;E:\library\msys2\software\usr\bin;E:\Software\compiler\jetbrains\CLion\software\CLion 2021.3.4\bin;;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\袁雨\.dnx\bin;C;\Program Files\Microsoft DNX\Dnvm\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;E:\Software\compiler\Visual Stdio\software\ide\VC\Tools\MSVC\14.30.30705\bin\Hostx64\x64;C:\Program Files (x86)\National Instruments\Shared\LabVIEW CLI;E:\library\opencv\opencv_w_4_5_5\opencv\build\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\lib;E:\Software\compiler\JavaScript\Node.js\software\;E:\Software\compiler\CMake\software\bin;E:\Software\compiler\Git\Git\cmd;C:\Program Files\dotnet\;E:\Software\compiler\putty\software\;E:\library\msys2\software\mingw32\bin;E:\library\msys2\software\mingw64\\bin;E:\library\msys2\software\usr\bin;E:\library\java\src\bin;E:\library\gcc-arm-none-eabi\src\10 2021.10\bin;E:\Software\compiler\python\software\python\Scripts\;E:\Software\compiler\python\software\python\;C:\Users\袁雨\AppData\Local\Microsoft\WindowsApps;E:\Software\compiler\Microsoft VS Code\bin;C:\Users\袁雨\AppData\Roaming\npm;\.dotnet\tools;E:\Software\Tools\input-method\software\espanso;E:\library\msys2\software\usr\bin;E:\Software\compiler\jetbrains\CLion\software\CLion 2021.3.4\bin;;E:\library\DevEco\software\Huawei\DevEco-Device-Tool\core\deveco-venv\Scripts;E:\library\DevEco\software\Huawei\DevEco-Device-Tool\core\deveco-venv;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\袁雨\.dnx\bin;C;\Program Files\Microsoft DNX\Dnvm\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;E:\Software\compiler\Visual Stdio\software\ide\VC\Tools\MSVC\14.30.30705\bin\Hostx64\x64;C:\Program Files (x86)\National Instruments\Shared\LabVIEW CLI;E:\library\opencv\opencv_w_4_5_5\opencv\build\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\lib;E:\Software\compiler\JavaScript\Node.js\software\;E:\Software\compiler\CMake\software\bin;E:\Software\compiler\Git\Git\cmd;C:\Program Files\dotnet\;E:\Software\compiler\putty\software\;E:\library\msys2\software\mingw32\bin;E:\library\msys2\software\mingw64\\bin;E:\library\msys2\software\usr\bin;E:\library\java\src\bin;E:\library\gcc-arm-none-eabi\src\10 2021.10\bin;E:\Software\compiler\python\software\python\Scripts\;E:\Software\compiler\python\software\python\;C:\Users\袁雨\AppData\Local\Microsoft\WindowsApps;E:\Software\compiler\Microsoft VS Code\bin;C:\Users\袁雨\AppData\Roaming\npm;\.dotnet\tools;E:\Software\Tools\input-method\software\espanso;E:\library\msys2\software\usr\bin;E:\Software\compiler\jetbrains\CLion\software\CLion 2021.3.4\bin;;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\袁雨\.dnx\bin;C;\Program Files\Microsoft DNX\Dnvm\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;E:\Software\compiler\Visual Stdio\software\ide\VC\Tools\MSVC\14.30.30705\bin\Hostx64\x64;C:\Program Files (x86)\National Instruments\Shared\LabVIEW CLI;E:\library\opencv\opencv_w_4_5_5\opencv\build\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\bin;E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15\lib;E:\Software\compiler\JavaScript\Node.js\software\;E:\Software\compiler\CMake\software\bin;E:\Software\compiler\Git\Git\cmd;C:\Program Files\dotnet\;E:\Software\compiler\putty\software\;E:\library\msys2\software\mingw32\bin;E:\library\msys2\software\mingw64\\bin;E:\library\msys2\software\usr\bin;E:\library\java\src\bin;E:\library\gcc-arm-none-eabi\src\10 2021.10\bin;E:\Software\compiler\python\software\python\Scripts\;E:\Software\compiler\python\software\python\;C:\Users\袁雨\AppData\Local\Microsoft\WindowsApps;E:\Software\compiler\Microsoft VS Code\bin;C:\Users\袁雨\AppData\Roaming\npm;\.dotnet\tools;E:\Software\Tools\input-method\software\espanso;E:\library\msys2\software\usr\bin;E:\Software\compiler\jetbrains\CLion\software\CLion 2021.3.4\bin;
+# makefile
+.DEFAULT_GOAL := 
+# environment
+OPENCV_DIR = E:\library\opencv\opencv_w_4_5_5\opencv\build\x64\vc15
+# environment
+LIBRARY_PATH = E:\library\msys2\software\mingw64\\lib
+# default
+MAKE_VERSION := 4.3
+# environment
+PROGRAMFILES(X86) = C:\Program Files (x86)
+# environment
+USERDOMAIN_ROAMINGPROFILE = LAPTOP-3H3NNULN
+# environment
+NUMBER_OF_PROCESSORS = 8
+# environment
+PUBLIC = C:\Users\Public
+# environment
+APPDATA = C:\Users\袁雨\AppData\Roaming
+# environment
+HOMEDRIVE = C:
+# environment
+PROCESSOR_ARCHITECTURE = AMD64
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+PLATFORMIO_IDE = 2.4.3
+# environment
+HOME = /home/袁雨
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+TEMP = /d/AppData/Local/Temp/Temp
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\8d68987ed9fae79909cd587a47828b44-1.66.1-main-sock
+# environment
+TERM = xterm-256color
+# default
+.RECIPEPREFIX := 
+# automatic
+<F = $(notdir $<)
+# default
+SUFFIXES := 
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# environment
+SESSIONNAME = Console
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink load
+# environment
+PROCESSOR_REVISION = 9e0a
+# environment
+PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
+# variable set hash-table stats:
+# Load=118/1024=12%, Rehash=0, Collisions=14/142=10%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 2425885208, inode 281474979086389): 18 files, no impossibilities.
+
+# 18 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+# Not a target:
+makefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+GNUmakefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# files hash-table stats:
+# Load=6/1024=1%, Rehash=0, Collisions=0/15=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 25 / storage = 249 B / avg = 9 B
+# current buf: size = 8162 B / used = 249 B / count = 25 / avg = 9 B
+
+# strcache performance: lookups = 28 / hit rate = 10%
+# hash-table stats:
+# Load=25/8192=0%, Rehash=0, Collisions=0/28=0%
+# Finished Make data base on Sun Apr 10 16:07:17 2022
+
+ 

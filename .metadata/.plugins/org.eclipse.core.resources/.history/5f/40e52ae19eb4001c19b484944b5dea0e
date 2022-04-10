@@ -1,0 +1,28 @@
+#include "common_inc.h"
+#include "usart.h"
+#include "debug_usart.hpp"
+#include "wifi_usart.hpp"
+
+/* Access point connection parametres */
+#define WIFI_SSID       "honor"
+#define WIFI_PASSWORD   "33445566"
+#define HOST_ADDRESS    "192.168.43.183"
+#define HOST_PORT       8000
+
+
+DebugUsart debugUsart(&huart1);
+WifiUsart wifiUsart(&huart2);
+//, WIFI_SSID, WIFI_PASSWORD, HOST_ADDRESS, HOST_PORT
+
+
+/* Default Entry -------------------------------------------------------*/
+void Main(void)
+{
+    debugUsart.printf("wifi bds imu project\r\n");
+    wifiUsart.init(WIFI_SSID, WIFI_PASSWORD, HOST_ADDRESS, HOST_PORT);
+    wifiUsart.printf("wifi module connected successfully!\r\n");
+    while(1)
+    {
+
+    }
+}

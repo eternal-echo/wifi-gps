@@ -1,0 +1,50 @@
+#include "common_inc.h"
+#include "usart.h"
+#include "debug_usart.hpp"
+#include "wifi_usart.hpp"
+#include "bds_usart.h"
+
+/* Access point connection parametres */
+#define WIFI_SSID       "honor"
+#define WIFI_PASSWORD   "33445566"
+#define HOST_ADDRESS    "192.168.43.183"
+#define HOST_PORT       8000
+
+
+DebugUsart debugUsart(&huart1);
+WifiUsart wifiUsart(&huart2);
+BDS_Usart bdsUsart(&huart3);
+
+osThreadId bds_taskHandle;
+
+void thread_bds(void const * argument)
+{
+    osEvent event;
+    bdsUsart.init();
+    /* Infinite loop */
+    for(;;)
+    {
+        // wait for GPS_RX_Event
+        event = osSignalWait(BDS_Usart::STATUS::RX_FULL, osWaitForever);
+        bdsUsart.decode(event.value.signals, &wifiUsart);
+        osDelay(1000);
+    }
+}
+/* Default Entry -------------------------------------------------------*/
+void Main(void)
+{
+	// init
+    debugUsart.printf("wifi bds imu project\r\n");
+    wifiUsart.init(WIFI_SSID, WIFI_PASSWORD, HOST_ADDRESS, HOST_PORT);
+    wifiUsart.printf("wifi module connected successfully!\r\n");
+//    Usart* pusart = &wifiUsart;
+
+    osThreadDef(bds_task, thread_bds, osPriorityAboveNormal, 0, 1024);
+    bds_taskHandle = osThreadCreate(osThread(bds_task), NULL);
+
+    while(1)
+    {
+//    	pusart->printf(">wifi pointer!\r\n");
+//    	osDelay(1000);
+    }
+}

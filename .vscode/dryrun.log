@@ -1,0 +1,6 @@
+make.exe --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/e/Study/stm32/f429/repository/wifi/wifi-gps-imu-3'
+make: Leaving directory '/e/Study/stm32/f429/repository/wifi/wifi-gps-imu-3'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+

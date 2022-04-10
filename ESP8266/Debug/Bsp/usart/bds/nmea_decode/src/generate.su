@@ -1,0 +1,12 @@
+../Bsp/usart/bds/nmea_decode/src/generate.c:20:5:nmea_gen_GPGGA	200	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:30:5:nmea_gen_GPGSA	168	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:40:5:nmea_gen_GPGSV	160	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:55:5:nmea_gen_GPRMC	184	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:66:5:nmea_gen_GPVTG	120	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:76:6:nmea_info2GPGGA	40	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:91:6:nmea_info2GPGSA	24	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:109:5:nmea_gsv_npack	24	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:119:6:nmea_info2GPGSV	40	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:140:6:nmea_info2GPRMC	40	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:157:6:nmea_info2GPVTG	16	static
+../Bsp/usart/bds/nmea_decode/src/generate.c:167:5:nmea_generate	616	static

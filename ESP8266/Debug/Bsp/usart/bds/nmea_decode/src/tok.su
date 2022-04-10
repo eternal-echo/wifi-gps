@@ -1,0 +1,5 @@
+../Bsp/usart/bds/nmea_decode/src/tok.c:30:5:nmea_calc_crc	24	static
+../Bsp/usart/bds/nmea_decode/src/tok.c:44:5:nmea_atoi	288	static
+../Bsp/usart/bds/nmea_decode/src/tok.c:63:8:nmea_atof	288	static
+../Bsp/usart/bds/nmea_decode/src/tok.c:82:5:nmea_printf	40	static
+../Bsp/usart/bds/nmea_decode/src/tok.c:117:5:nmea_scanf	56	static

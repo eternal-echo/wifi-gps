@@ -1,0 +1,90 @@
+#include <usart.hpp>
+
+void Usart::init(UART_HandleTypeDef *husart)
+{
+	husart_=husart;
+}
+
+void Usart::deinit() {
+    // deinit the usart peripheral
+    HAL_UART_DeInit(husart_);
+}
+
+int8_t Usart::send(uint8_t data) {
+    // send a single byte
+    return send(&data,1);
+}
+
+int8_t Usart::send(const uint8_t * data) {
+    // send a string
+    return send(data,1);
+}
+
+int8_t Usart::send(const uint8_t * data, uint16_t length) {
+  /* Unlike the recv(), the send() is using a blocking call
+     to ensure that the data were correctly sent. */
+  if (HAL_UART_Transmit(husart_, (uint8_t*)data, length, 0xff) != HAL_OK)
+  {
+     return -1;
+  }
+  
+  return 0;
+}
+
+int8_t Usart::send(const std::string& data) {
+    // send a string
+    return send((uint8_t *)data.c_str(), data.length());
+}
+
+int8_t Usart::send(const std::string& data, uint16_t length) {
+    // send a string
+    return send((uint8_t*)data.c_str(), length);
+}
+
+void Usart::printf(const char* fmt, ...) {
+    // format a string and send it
+    va_list args;
+    va_start(args, fmt);
+    char buffer[256];
+    vsnprintf(buffer, sizeof(buffer), fmt, args);
+    send(buffer, strlen(buffer));
+    va_end(args);
+}
+
+void Usart::print(int n)
+{
+    // print an integer
+    printf("%d", n);
+}
+
+void Usart::print(double n, int digits)
+{
+    // print a double
+    char format[16];
+    sprintf(format, "%%%d.%df", digits, digits);
+    printf(format, n);
+}
+
+void print(const char* str)
+{
+    // print a string
+    printf("%s", str);
+}
+
+int32_t Usart::recv(uint8_t* Buffer, uint32_t Length)
+{
+    if(HAL_UART_Receive_IT(husart_, (uint8_t *)Buffer, Length)!= HAL_OK)
+    {
+        return -1;
+    }
+    return 0;
+}
+
+int32_t Usart::recv(std::string& Buffer, uint32_t Length)
+{
+    char *pBuffer = new char[Length];
+    int32_t result = recv((uint8_t *)pBuffer, Length);
+    Buffer.clear();
+    Buffer+=pBuffer;
+    return result;
+}

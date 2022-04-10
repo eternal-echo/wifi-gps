@@ -1,0 +1,10 @@
+15:55:11 **** Incremental Build of configuration Debug for project ESP8266 ****
+make -j8 all 
+arm-none-eabi-size   ESP8266.elf 
+   text	   data	    bss	    dec	    hex	filename
+  78092	    572	  51032	 129696	  1faa0	ESP8266.elf
+Finished building: default.size.stdout
+ 
+
+15:55:13 Build Finished. 0 errors, 0 warnings. (took 1s.775ms)
+

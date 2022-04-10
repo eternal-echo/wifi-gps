@@ -1,0 +1,10 @@
+../Bsp/imu/Kalman.cpp:20:1:Kalman::Kalman()	16	static
+../Bsp/imu/Kalman.cpp:36:7:float Kalman::getAngle(float, float, float)	48	static
+../Bsp/imu/Kalman.cpp:83:6:void Kalman::setAngle(float)	16	static
+../Bsp/imu/Kalman.cpp:84:7:float Kalman::getRate()	16	static
+../Bsp/imu/Kalman.cpp:87:6:void Kalman::setQangle(float)	16	static
+../Bsp/imu/Kalman.cpp:88:6:void Kalman::setQbias(float)	16	static
+../Bsp/imu/Kalman.cpp:89:6:void Kalman::setRmeasure(float)	16	static
+../Bsp/imu/Kalman.cpp:91:7:float Kalman::getQangle()	16	static
+../Bsp/imu/Kalman.cpp:92:7:float Kalman::getQbias()	16	static
+../Bsp/imu/Kalman.cpp:93:7:float Kalman::getRmeasure()	16	static

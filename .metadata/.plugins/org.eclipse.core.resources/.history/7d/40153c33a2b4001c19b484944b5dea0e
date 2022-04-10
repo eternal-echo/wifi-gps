@@ -1,0 +1,58 @@
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __BDS_USART_H
+#define __BDS_USART_H
+/*---------------------------- C Scope ---------------------------*/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+#include "common_inc.h"
+#include "nmea/nmea.h"
+#include "usart.hpp"
+#include "usart.h"
+/* Definitions ---------------------------------------------------------------*/
+#define __GPS_DEBUG     //定义这个宏，在nmea解码时会输出调试信息
+
+/* Typedef -------------------------------------------------------------------*/
+typedef enum{
+    GPS_RX_NONE = 0x00,
+    GPS_RX_HALF = 0x01,
+    GPS_RX_FULL = 0x02,
+}GPS_STATUS;
+
+
+/* Function prototypes -------------------------------------------------------*/
+
+
+/* External variables --------------------------------------------------------*/
+
+
+#ifdef __cplusplus
+}
+/*---------------------------- C++ Scope ---------------------------*/
+// bds usart class : usart2
+class BDS_Usart : public Usart
+{
+/* public functions ----------------------------------------------------------*/
+public:
+    BDS_Usart():GPS_uart_handle(husart_){}
+    ~BDS_Usart(){}
+    void init();
+    void GMTconvert(nmeaTIME *source_time, nmeaTIME *convert_time, uint8_t GMT,uint8_t area);
+private:
+/* Private function prototypes -----------------------------------------------*/
+    void trace(const char *str, int str_size);
+    void error(const char *str, int str_size);
+    void gps_info(const char *str, int str_size);
+    uint8_t IsLeapYear(uint8_t iYear) ;
+/* private enum ---------------------------------------------------------*/
+    enum {GPS_RECV_BUFF_SIZE = 512};
+/* private variables ---------------------------------------------------------*/
+    uint8_t gps_receive_buffer[GPS_RECV_BUFF_SIZE] = {0};
+    UART_HandleTypeDef* &GPS_uart_handle; // usart3 引用（别名）
+};
+#endif
+
+#endif /* __BDS_USART_H */

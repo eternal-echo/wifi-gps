@@ -1,0 +1,15 @@
+../Bsp/usart/bds/nmea_decode/src/gmath.c:22:8:nmea_degree2radian	16	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:29:8:nmea_radian2degree	16	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:35:8:nmea_ndeg2degree	24	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:45:8:nmea_degree2ndeg	40	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:58:8:nmea_ndeg2radian	16	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:65:8:nmea_radian2ndeg	16	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:71:8:nmea_calc_pdop	32	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:76:8:nmea_dop2meters	16	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:79:8:nmea_meters2dop	16	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:86:8:nmea_distance	40	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:105:8:nmea_distance_ellipsoid	376	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:220:5:nmea_move_horz	88	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:253:5:nmea_move_horz_ellipsoid	384	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:364:6:nmea_info2pos	16	static
+../Bsp/usart/bds/nmea_decode/src/gmath.c:373:6:nmea_pos2info	16	static

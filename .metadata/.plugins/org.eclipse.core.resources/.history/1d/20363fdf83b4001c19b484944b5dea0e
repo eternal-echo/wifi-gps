@@ -1,0 +1,105 @@
+#include "wifi_usart.hpp"
+
+void WifiUsart::init()
+{
+    // init wifi usart
+    DEBUG_PRINTF("wifi usart init\r\n");
+    do
+    {
+        HAL_Delay(100);
+    } while (ESP8266_Init() != ESP8266_Status::ESP8266_OK);
+}
+
+void WifiUsart::init(const char* ssid, const char* password, const char* host, uint32_t port)
+{
+    // init wifi usart
+	init();
+	join_wifi(ssid, password);
+}
+
+void WifiUsart::deinit()
+{
+    // deinit wifi usart
+    DEBUG_PRINTF("wifi usart deinit\r\n");
+    ESP8266_DeInit();
+}
+
+void WifiUsart::join_wifi(const char* ssid, const char* password)
+{
+    Trial = 0;
+    /* Join Access Point defined by user */
+    DEBUG_PRINTF("Joining Access Point:%s ...\n", ssid);
+    while(ESP8266_JoinAccessPoint((uint8_t *)ssid, (uint8_t *)password) != ESP8266_Status::ESP8266_OK)
+    {
+        DEBUG_PRINTF("Retrying ( %d )to Join Access Point:%s ...\n", Trial, ssid);
+        if (Trial == MAX_NUM_TRIAL)
+            break;
+    }
+
+    /* Check if maximum number of trials has been reached */
+    if (Trial == MAX_NUM_TRIAL)
+    {
+        DEBUG_PRINTF("Joining Access Point %s Failed!\n\n", ssid);
+        Error_Handler();
+    }
+    else
+    {
+        /* Reset the IP address field to 0 */
+        memset(IpAddress, '\0', 15);
+
+        /* Access point joined: start getting IP address */
+        ESP8266_GetIPAddress(ESP8266_Mode::ESP8266_STATION_MODE, IpAddress);
+        DEBUG_PRINTF("OK!\nGot IP Address: %s\n\n", (char *)IpAddress);
+        HAL_Delay(1000);
+    }
+}
+
+void WifiUsart::connect_host(const char* host, uint32_t port)
+{
+    ESP8266_ConnectionInfo ConnectionInfo;
+    //ESP8266_StatusTypeDef Result = ESP8266_Status::ESP8266_OK;
+    
+    /* Connect to TCP server defined by user */
+    DEBUG_PRINTF("Connecting to TCP server:%s:%d ...\n", host, port);
+    /* Initialize Connection info structure */
+    Trial = 0;
+    memset(&ConnectionInfo, '\0', sizeof (ESP8266_ConnectionInfo));
+
+    ConnectionInfo.connectionType = ESP8266_ConnectionMode::ESP8266_TCP_CONNECTION;
+    ConnectionInfo.ipAddress = (uint8_t *)host;
+    ConnectionInfo.isServer = ESP8266_FALSE;
+    ConnectionInfo.port = port;
+
+    /* Wait for communication establishment */
+    while (ESP8266_EstablishConnection(&ConnectionInfo) != ESP8266_Status::ESP8266_OK)
+    {
+        DEBUG_PRINTF("Retrying( %d ) to connect to %s:%d \n", (int)++Trial, host, port);
+        HAL_Delay(1000);
+
+        if (Trial == MAX_NUM_TRIAL)
+        {
+            break;
+        }
+
+        /* Check if trials number exceeded maximum limit */
+        if (Trial == MAX_NUM_TRIAL)
+        {
+            DEBUG_PRINTF("Connecting to %s:%d  Failed!\n", host, port);
+            DEBUG_PRINTF("Quitting Access Point...\n\n");
+
+            /* Leave the access point */
+            ESP8266_QuitAccessPoint();
+
+            /* Deinitialize the WiFi module */
+            ESP8266_DeInit();
+
+            /* Call the error Handler */
+            Error_Handler();
+        }
+        else
+        {
+            DEBUG_PRINTF("Try again...\n");
+            HAL_Delay(1000);
+        }
+    }
+}

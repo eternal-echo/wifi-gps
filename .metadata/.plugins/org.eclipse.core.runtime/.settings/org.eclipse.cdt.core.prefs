@@ -1,0 +1,10 @@
+ToolChainManager/order/0.id=gcc-arm-E\:/library/gcc-arm-none-eabi/src/10 2021.10/bin/arm-none-eabi-gcc.exe
+ToolChainManager/order/0.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/1.id=gcc-x86-E\:/library/msys2/software/mingw32/bin/gcc.exe
+ToolChainManager/order/1.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/2.id=gcc-i686-E\:/library/msys2/software/mingw32/bin/gcc.exe
+ToolChainManager/order/2.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/3.id=gcc-i686-E\:/library/msys2/software/mingw32/bin/i686-w64-mingw32-gcc.exe
+ToolChainManager/order/3.type=org.eclipse.cdt.build.gcc
+ToolChainManager/order/n=4
+eclipse.preferences.version=1

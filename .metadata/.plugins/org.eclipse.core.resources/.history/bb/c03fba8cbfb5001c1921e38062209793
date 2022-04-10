@@ -1,0 +1,258 @@
+#include "common_inc.h"
+#include "usart.h"
+#include "i2c.h"
+
+#include "usart.hpp"
+#include "debug_usart.hpp"
+#include "wifi_usart.hpp"
+#include "bds_usart.h"
+// I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
+// for both classes must be in the include path of your project
+#include "I2Cdev.h"
+#include "MPU6050_6Axis_MotionApps20.h"
+//#include "MPU6050.h" // not necessary if using MotionApps include file
+
+/* Access point connection parametres */
+#define WIFI_SSID       "honor"
+#define WIFI_PASSWORD   "33445566"
+#define HOST_ADDRESS    "192.168.43.183"
+#define HOST_PORT       8000
+
+DebugUsart debugUsart(&huart1);
+WifiUsart wifiUsart(&huart2);
+BDS_Usart bdsUsart(&huart3);
+MPU6050 mpu(hi2c1);
+
+
+// ================================================================
+// ===               INTERRUPT DETECTION ROUTINE                ===
+// ================================================================
+
+volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
+// PI1 is connected to interrupt pin on MPU6050
+// EXTI callback function
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if(GPIO_Pin == MPU6050_INT_Pin)
+    {
+        mpuInterrupt = true;
+    }
+}
+
+
+/* Threads ---------------------------------------------------------*/
+osThreadId imu_taskHandle;
+osThreadId bds_taskHandle;
+osThreadId control_taskHandle;
+
+// imu 线程
+void thread_imu(void const * argument)
+{
+    // MPU control/status vars
+    bool dmpReady = false;  // set true if DMP init was successful
+    uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
+    uint8_t devStatus;      // return status after each device operation (0 = success, !0 = error)
+    uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
+    uint16_t fifoCount;     // count of all bytes currently in FIFO
+    uint8_t fifoBuffer[64]; // FIFO storage buffer
+
+    // orientation/motion vars
+    Quaternion q;           // [w, x, y, z]         quaternion container
+    VectorInt16 aa;         // [x, y, z]            accel sensor measurements
+    VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
+    VectorInt16 aaWorld;    // [x, y, z]            world-frame accel sensor measurements
+    VectorFloat gravity;    // [x, y, z]            gravity vector
+    float euler[3];         // [psi, theta, phi]    Euler angle container
+    float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+
+    // packet structure for InvenSense teapot demo
+    uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
+
+    osEvent event;
+
+    /* set up */
+    // initialize device
+    debugUsart.printf("init mpu6050 module\r\n");
+    mpu.initialize();
+
+    // verify connection
+    debugUsart.printf("test mpu6050 module connections...\r\n");
+    debugUsart.printf("%s\r\n", mpu.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
+
+    // load and configure the DMP
+    debugUsart.printf("initializing DMP...\r\n");
+    devStatus = mpu.dmpInitialize();
+
+    // supply your own gyro offsets here, scaled for min sensitivity
+    mpu.setXGyroOffset(220);
+    mpu.setYGyroOffset(-85);
+    mpu.setZGyroOffset(85);
+    mpu.setXAccelOffset(0);
+    mpu.setYAccelOffset(0);
+    mpu.setZAccelOffset(0);
+
+    // make sure it worked (returns 0 if so)
+    if (devStatus == 0) {
+        // Calibration Time: generate offsets and calibrate our MPU6050
+        mpu.CalibrateAccel(6);
+        mpu.CalibrateGyro(6);
+        mpu.PrintActiveOffsets();
+        // turn on the DMP, now that it's ready
+        debugUsart.printf("Enabling DMP...");
+        mpu.setDMPEnabled(true);
+
+        // check ST interrupt detection
+        mpuIntStatus = mpu.getIntStatus();
+
+        // set our DMP Ready flag so the main loop() function knows it's okay to use it
+        debugUsart.printf("DMP ready! Waiting for first interrupt...");
+        dmpReady = true;
+
+        // get expected DMP packet size for later comparison
+        packetSize = mpu.dmpGetFIFOPacketSize();
+
+        } 
+        else 
+        {
+            // ERROR!
+            // 1 = initial memory load failed
+            // 2 = DMP configuration updates failed
+            // (if it's going to break, usually the code will be 1)
+            debugUsart.printf("DMP Initialization failed (code ");
+            debugUsart.print(devStatus);
+            debugUsart.printf(")");
+        }
+
+        /* dmp */
+        while(1)
+        {
+            // if programming failed, don't try to do anything
+            if (!dmpReady) return;
+
+            // wait for MPU interrupt or extra packet(s) available
+            if (!mpuInterrupt && fifoCount < packetSize) return;
+
+            // reset interrupt flag and get INT_STATUS byte
+            mpuInterrupt = false;
+            mpuIntStatus = mpu.getIntStatus();
+
+            // get current FIFO count
+            fifoCount = mpu.getFIFOCount();
+
+            // check for overflow (this should never happen unless our code is too inefficient)
+            if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
+                // reset so we can continue cleanly
+                mpu.resetFIFO();
+                debugUsart.printf("FIFO overflow!");
+
+                // otherwise, check for DMP data ready interrupt (this should happen frequently)
+            } 
+            else if (mpuIntStatus & 0x02) 
+            {
+                // wait for correct available data length, should be a VERY short wait
+                while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+
+                // read a packet from FIFO
+                mpu.getFIFOBytes(fifoBuffer, packetSize);
+
+                // track FIFO count here in case there is > 1 packet available
+                // (this lets us immediately read more without waiting for an interrupt)
+                fifoCount -= packetSize;
+
+                    // display Euler angles in degrees
+
+                mpu.dmpGetQuaternion(&q, fifoBuffer);
+                mpu.dmpGetGravity(&gravity, &q);
+                mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+                debugUsart.printf("ypr\t");
+                debugUsart.print(ypr[0] * 180/M_PI);
+                debugUsart.print("\t");
+                debugUsart.print(ypr[1] * 180/M_PI);
+                debugUsart.print("\t");
+                debugUsart.println(ypr[2] * 180/M_PI);
+            }
+        }
+}
+// BDS 线程
+void thread_bds(void const * argument)
+{
+    osEvent event;
+    bdsUsart.init();
+    /* Infinite loop */
+    for(;;)
+    {
+        // wait for send position cmd from ctrl task
+        event = osSignalWait((int32_t)BDS_Usart::STATUS::TX_DATA, osWaitForever);
+        if (event.status == osEventSignal)
+        {
+          // handle event status
+            if(event.value.signals & (int32_t)BDS_Usart::STATUS::TX_DATA)
+            {
+                // wait for GPS_RX_Event
+                event = osSignalWait((int32_t)BDS_Usart::STATUS::RX_FULL | (int32_t)BDS_Usart::STATUS::RX_HALF, osWaitForever);
+                if(event.status == osEventSignal)
+                {
+                    // handle event status
+                    bdsUsart.decode(event.value.signals, &wifiUsart);
+                    // send end signal to ctrl task
+                    osSignalSet(control_taskHandle, (int32_t)BDS_Usart::STATUS::TX_END);
+                }
+            }
+        }
+    }
+}
+
+// 控制线程
+void thread_control(void const * argument)
+{
+    osEvent event;
+    Usart* usart = (Usart*)argument;
+    uint8_t cmd;
+    debugUsart.printf("ctrl tsak\r\n");
+    /* Infinite loop */
+    for(;;)
+    {
+        usart->recv(&cmd,1);
+        if(cmd==0x01)
+        {
+        	cmd=0;
+        	debugUsart.printf("imu cmd\r\n");
+        }
+        else if(cmd==0x02)
+        {
+        	cmd=0;
+        	debugUsart.printf("bds cmd\r\n");
+            // notify bds_task to send data
+            osSignalSet(bds_taskHandle, (int32_t)BDS_Usart::STATUS::TX_DATA);
+            // wait for bds_task to send data
+            event = osSignalWait((int32_t)BDS_Usart::STATUS::TX_END, osWaitForever);
+            usart->printf("get position from bds_task successfully!\r\n");
+        }
+        else 
+            osDelay(10);
+    }
+}
+
+/* Default Entry -------------------------------------------------------*/
+void Main(void)
+{
+	// init
+    debugUsart.printf("wifi bds imu project\r\n");
+    wifiUsart.init(WIFI_SSID, WIFI_PASSWORD, HOST_ADDRESS, HOST_PORT);
+    wifiUsart.printf("wifi module connected successfully!\r\n");
+
+    // IMU 线程, 实现测量姿态
+    osThreadDef(imu_task, thread_imu, osPriorityHigh, 0, 1024);
+    imu_taskHandle = osThreadCreate(osThread(imu_task), NULL);
+    // BDS 线程, 实现定位
+    osThreadDef(bds_task, thread_bds, osPriorityNormal, 0, 1024);
+    bds_taskHandle = osThreadCreate(osThread(bds_task), NULL);
+    // 控制线程，通过Usart接口接收用户指令，并执行相应操作
+    osThreadDef(control_task, thread_control, osPriorityAboveNormal, 0, 1024);
+    // 通过wifi实现控制
+    control_taskHandle = osThreadCreate(osThread(control_task), &wifiUsart);
+    while(1)
+    {
+        osDelay(1000);
+    }
+}

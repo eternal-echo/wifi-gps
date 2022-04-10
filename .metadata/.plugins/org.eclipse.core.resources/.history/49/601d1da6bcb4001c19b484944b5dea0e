@@ -1,0 +1,286 @@
+/**
+ * @file gps_task.c
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2022-03-25
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+/* Includes ------------------------------------------------------------------*/
+#include "bds_usart.h"
+/* Private define ------------------------------------------------------------*/
+
+/* Variables -----------------------------------------------------------------*/
+
+
+/**
+  * @brief  trace 在解码时输出捕获的GPS语句
+  * @param  str: 要输出的字符串，str_size:数据长度
+  * @retval 无
+  */
+void trace(const char *str, int str_size)
+{
+  #ifdef __GPS_DEBUG    //在gps_config.h文件配置这个宏，是否输出调试信息
+    uint16_t i;
+    printf("\r\nTrace: ");
+    for(i=0;i<str_size;i++)
+      printf("%c",*(str+i));
+  
+    printf("\n");
+  #endif
+}
+
+/**
+  * @brief  error 在解码出错时输出提示消息
+  * @param  str: 要输出的字符串，str_size:数据长度
+  * @retval 无
+  */
+void error(const char *str, int str_size)
+{
+    #ifdef __GPS_DEBUG   //在gps_config.h文件配置这个宏，是否输出调试信息
+
+    uint16_t i;
+    printf("\r\nError: ");
+    for(i=0;i<str_size;i++)
+      printf("%c",*(str+i));
+    printf("\n");
+    #endif
+}
+
+/**
+  * @brief  info 在解码成功时输出提示消息
+  * @param  str: 要输出的字符串，str_size:数据长度
+  * @retval 无
+  */
+void gps_info(const char *str, int str_size)
+{
+
+    uint16_t i;
+    printf("\r\nInfo: ");
+    for(i=0;i<str_size;i++)
+      printf("%c",*(str+i));
+    printf("\n");
+}
+
+/**
+ * @brief init gps
+ *             circularly receive data from gps
+ *
+ * @param gps_recv_data
+ * @param size
+ */
+void BDS_Usart::init()
+{
+    /* 设置用于输出调试信息的函数 */
+    nmea_property()->trace_func = &trace;
+    nmea_property()->error_func = &error;
+    nmea_property()->info_func = &gps_info;
+    // start uart circularly receiving in DMA mode
+    HAL_UART_Receive_DMA(BDS_UartHandle, bds_receive_buffer, BDS_RECV_BUFF_SIZE);
+}
+
+/**
+ * @brief  判断闰年(仅针对于2000以后的年份)
+ * 
+ * @param iYear 两位年数
+ * @return uint8_t 1:为闰年    0:为平年 
+ */
+uint8_t BDS_Usart::IsLeapYear(uint8_t iYear) 
+{ 
+    uint16_t    Year; 
+    Year    =    2000+iYear; 
+    if((Year&3)==0) 
+    { 
+        return ((Year%400==0) || (Year%100!=0)); 
+    } 
+     return 0; 
+} 
+
+/**
+ * @brief 格林尼治时间换算世界各时区时间
+ * 
+ * @param source_time 格林尼治时间
+ * @param convert_time 表示日期时间的数组 格式 YY,MM,DD,HH,MM,SS 
+ * @param GMT 时区数
+ * @param area 1(+)东区 W0(-)西区
+ */
+void BDS_Usart::GMTconvert(nmeaTIME *source_time, nmeaTIME *convert_time, uint8_t GMT,uint8_t area) 
+{ 
+    uint32_t    YY,MM,DD,hh,mm,ss;        //年月日时分秒暂存变量 
+     
+    if(GMT==0)    return;                //如果处于0时区直接返回 
+    if(GMT>12)    return;                //时区最大为12 超过则返回         
+
+    YY    =    source_time->year;                //获取年 
+    MM    =    source_time->mon;                 //获取月 
+    DD    =    source_time->day;                 //获取日 
+    hh    =    source_time->hour;                //获取时 
+    mm    =    source_time->min;                 //获取分 
+    ss    =    source_time->sec;                 //获取秒 
+
+    if(area)                        //东(+)时区处理 
+    { 
+        if(hh+GMT<24)    hh    +=    GMT;//如果与格林尼治时间处于同一天则仅加小时即可 
+        else                        //如果已经晚于格林尼治时间1天则进行日期处理 
+        { 
+            hh    =    hh+GMT-24;        //先得出时间 
+            if(MM==1 || MM==3 || MM==5 || MM==7 || MM==8 || MM==10)    //大月份(12月单独处理) 
+            { 
+                if(DD<31)    DD++; 
+                else 
+                { 
+                    DD    =    1; 
+                    MM    ++; 
+                } 
+            } 
+            else if(MM==4 || MM==6 || MM==9 || MM==11)                //小月份2月单独处理) 
+            { 
+                if(DD<30)    DD++; 
+                else 
+                { 
+                    DD    =    1; 
+                    MM    ++; 
+                } 
+            } 
+            else if(MM==2)    //处理2月份 
+            { 
+                if((DD==29) || (DD==28 && IsLeapYear(YY)==0))        //本来是闰年且是2月29日 或者不是闰年且是2月28日 
+                { 
+                    DD    =    1; 
+                    MM    ++; 
+                } 
+                else    DD++; 
+            } 
+            else if(MM==12)    //处理12月份 
+            { 
+                if(DD<31)    DD++; 
+                else        //跨年最后一天 
+                {               
+                    DD    =    1; 
+                    MM    =    1; 
+                    YY    ++; 
+                } 
+            } 
+        } 
+    } 
+    else 
+    {     
+        if(hh>=GMT)    hh    -=    GMT;    //如果与格林尼治时间处于同一天则仅减小时即可 
+        else                        //如果已经早于格林尼治时间1天则进行日期处理 
+        { 
+            hh    =    hh+24-GMT;        //先得出时间 
+            if(MM==2 || MM==4 || MM==6 || MM==8 || MM==9 || MM==11)    //上月是大月份(1月单独处理) 
+            { 
+                if(DD>1)    DD--; 
+                else 
+                { 
+                    DD    =    31; 
+                    MM    --; 
+                } 
+            } 
+            else if(MM==5 || MM==7 || MM==10 || MM==12)                //上月是小月份2月单独处理) 
+            { 
+                if(DD>1)    DD--; 
+                else 
+                { 
+                    DD    =    30; 
+                    MM    --; 
+                } 
+            } 
+            else if(MM==3)    //处理上个月是2月份 
+            { 
+                if((DD==1) && IsLeapYear(YY)==0)                    //不是闰年 
+                { 
+                    DD    =    28; 
+                    MM    --; 
+                } 
+                else    DD--; 
+            } 
+            else if(MM==1)    //处理1月份 
+            { 
+                if(DD>1)    DD--; 
+                else        //新年第一天 
+                {               
+                    DD    =    31; 
+                    MM    =    12; 
+                    YY    --; 
+                } 
+            } 
+        } 
+    }         
+
+    convert_time->year   =    YY;                //更新年 
+    convert_time->mon    =    MM;                //更新月 
+    convert_time->day    =    DD;                //更新日 
+    convert_time->hour   =    hh;                //更新时 
+    convert_time->min    =    mm;                //更新分 
+    convert_time->sec    =    ss;                //更新秒 
+}  
+
+void BDS_Usart::decode(int32_t signals, Usart * outUsart)
+{
+    /* 初始化GPS数据结构 */
+    nmea_zero_INFO(&info);
+    nmea_parser_init(&parser);
+    // signals的GPS_RX_HALF位为1表示GPS数据传输完成
+    if(signals & STATUS::RX_HALF == STATUS::RX_HALF)
+    {
+        /* 进行nmea格式解码 */
+        nmea_parse(&parser, (const char*)&bds_receive_buffer[0], BDS_RECV_BUFF_SIZE/2, &info);
+    }
+    // signals的GPS_RX_FULL位为1表示GPS数据传输完成
+    else if(signals & STATUS::RX_FULL == STATUS::RX_FULL)
+    {
+        /* 进行nmea格式解码 */
+        nmea_parse(&parser, (const char*)&bds_receive_buffer[BDS_RECV_BUFF_SIZE/2], BDS_RECV_BUFF_SIZE/2, &info);
+    }
+    // signals的GPS_RX_NONE位为1表示GPS数据传输未完
+    else
+    {
+        return;
+    }
+    // 有新的解码信息
+    /* 对解码后的时间进行转换，转换成北京时间 */
+    GMTconvert(&info.utc,&beiJingTime,8,1);
+    outUsart->printf("BDS data:\r\n");
+    /* 输出解码得到的信息 */
+    outUsart->printf("time %d-%02d-%02d,%d:%d:%d\r\n", beiJingTime.year+1900, beiJingTime.mon,beiJingTime.day,beiJingTime.hour,beiJingTime.min,beiJingTime.sec);
+
+    //info.lat lon中的格式为[degree][min].[sec/60]，使用以下函数转换成[degree].[degree]格式
+    deg_lat = nmea_ndeg2degree(info.lat);
+    deg_lon = nmea_ndeg2degree(info.lon);
+
+    outUsart->printf("latitude:%f,longitude:%f\r\n",deg_lat,deg_lon);
+    outUsart->printf("altitude:%f m \r\n", info.elv);
+    outUsart->printf("speed:%f km/h\r\n ", info.speed);
+    outUsart->printf("direction:%f degree\r\n", info.direction);
+
+    outUsart->printf("GPS satellite in use:%d,Visible GPS satellite:%d\r\n",info.satinfo.inuse,info.satinfo.inview);
+
+    outUsart->printf("Are using beidou satellite:%d,Beidou satellite visible:%d\r\n",info.BDsatinfo.inuse,info.BDsatinfo.inview);
+    outUsart->printf("PDOP:%f,HDOP:%f,VDOP:%f\r\n\r\n",info.PDOP,info.HDOP,info.VDOP);
+
+    nmea_parser_destroy(&parser);
+}
+
+extern osThreadId bds_taskHandle;
+
+void BDS_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+  if(UartHandle == bdsUsart.BDS_UartHandle)
+  {
+    // set flag when recv complete full
+    osSignalSet(bds_taskHandle, BDS_Usart::STATUS::RX_FULL);
+  }
+}
+
+void BDS_UART_RxHalfCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+  if(UartHandle == bdsUsart.BDS_UartHandle)
+  {
+    // set flag when recv complete half
+    osSignalSet(bds_taskHandle, BDS_Usart::STATUS::RX_HALF);
+  }
+}
